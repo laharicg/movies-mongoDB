@@ -17,7 +17,6 @@ app.post("/movie",async(req,res) => {
                 Movie_name : req.body.Movie_name,
                 Rating:req.body.Rating,
                 Language:req.body.Language,
-                Cast:req.body.Cast
             }
         )
         await client.close()
@@ -57,6 +56,7 @@ app.get("/All",async(req,res) => {
     }
 })
 
+/*
 app.get("/search",async(req,res) => {
     try {
         let client = await mongodb.connect(url)
@@ -74,9 +74,26 @@ app.get("/search",async(req,res) => {
     catch (error) {
         console.log(error)
     }
-})
+}) */
 
-app.listen(3000,function(){
+app.get("/findmovie/:Movie_name", async (req, res) => {
+    console.log(req.body);
+    try {
+      let client = await mongodb.connect(url);
+      let db = client.db("node");
+      console.log(db);
+      let data = await db.collection("movies").find({"Movie_name":req.body.Movie_name}).toArray();
+      await client.close();
+      res.json({
+       message:"success",
+       data:data,
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  });
+
+app.listen(4040,function(){
     console.log("success")
 
 })
